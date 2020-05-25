@@ -73,12 +73,12 @@
 <!-- 수어 section -->
 <aside class="page-section START" style="float: right;width: 50%;height:100%" id="START">
     <div class="container" style="padding: 10px">
-
+        {% csrf_token %}
         <video autoplay="true" class="videoElement"></video>
         <canvas id="snapshot" width=320 height=240></canvas>
         <button id="capture">Capture</button>
         <form name="test3" method='post' action='' enctype="multipart/form-data">
-            {% csrf_token %}
+
             <input type="file" name="myfile" class="file_test">
             <input type="submit" class="auto_send_image">
         </form>

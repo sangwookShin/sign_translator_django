@@ -7,19 +7,31 @@ if (navigator.mediaDevices.getUserMedia) {
 
             var snapshotCanvas = document.getElementById('snapshot');
             var captureButton = document.getElementById('capture');
-            var image_input = document.getElementsByClassName("file_test")
 
             captureButton.addEventListener('click', function () {
-                var context2 = snapshot.getContext('2d');
+                var context2 = snapshotCanvas.getContext('2d');
                 // Draw the video frame to the canvas.
                 context2.drawImage(video, 0, 0, snapshotCanvas.width,
                     snapshotCanvas.height);
-                console.log(typeof (video))
+
+                //이미지 전송
+                    var dataUrl = snapshotCanvas.toDataURL("image/jpg", 1.0)
+                console.log(dataUrl)
+
+                var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+
+                $.ajax({
+                    type: 'POST',
+                    url: '',
+                    data:{'img': dataUrl , 'csrfmiddlewaretoken': csrftoken}
+                })
             });
 
+            var time = 1;
             autoCapture = setInterval(function () {
                 captureButton.click()
 
+                if(time == 4)  clearInterval(autoCapture)
                 //document.test3.submit()
             }, 1000);
         })

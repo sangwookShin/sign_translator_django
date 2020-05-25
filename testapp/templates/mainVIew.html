@@ -18,7 +18,7 @@
 </div>
 
 <button id="capture">Capture</button>
-
+{% csrf_token %}
 <canvas id="snapshot" width=320 height=240></canvas>
 
 <form name = "test3" method='post' action='' enctype="multipart/form-data">
