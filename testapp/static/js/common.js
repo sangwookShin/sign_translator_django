@@ -1,4 +1,4 @@
-/*부트스트랩3 출력 사이즈 찾기*/
+/*부트스트랩3 출력 사이즈  찾기*/
 function findBootstrapEnvironment() {
 	var envs = ['xs', 'sm', 'md', 'lg'];
 
