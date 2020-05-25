@@ -1,0 +1,80 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="sign-language_auto_translate" />
+    <meta name="author" content="수어지교" />
+    <title>수어 자동 통역 서비스</title>
+    <!-- Font Awesome icons (free version)-->
+    <script src="https://use.fontawesome.com/releases/v5.12.1/js/all.js" crossorigin="anonymous"></script>
+    <!-- Google fonts-->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css" />
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="{%  static 'css/styles.css' %}" rel="stylesheet">
+    <script data-ad-client="ca-pub-2077999268380568" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+</head>
+
+<body id="page-top">
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+
+<!-- Navigation-->
+<nav class="navbar navbar-expand-lg bg-secondary text-uppercase fixed-top" id="mainNav">
+    <div class="container">
+        <a class="navbar-brand js-scroll-trigger">수어자동통역서비스</a>
+    </div>
+</nav>
+
+<!-- 마이크볼륨 / 언어 선택 Section-->
+<section class="page-section START" style="float: left;width: 50%" id="START">
+    <div class="container" style="padding: 10px">
+        <div class="row">
+            <h2 style="font-family:'Times New Roman';margin: auto">언어: </h2>
+            <div class="col-sm-10 form-inline">
+                    <select class="form-control" id="lang"></select>
+            </div>
+        </div>
+        <a href="/communication" style="color: white"><button type="button" class="btn btn-success float-md-right">확인</button></a>
+    </div>
+</section>
+
+<!-- Scroll to Top Button (Only visible on small and extra-small screen sizes)-->
+<div class="scroll-to-top d-lg-none position-fixed">
+    <a class="js-scroll-trigger d-block text-center text-white rounded" href="#page-top"><i class="fa fa-chevron-up"></i></a>
+</div>
+
+
+<script src="/signapp/static/js/common.js"></script>
+<script src="/signapp/static/js/artyom.window.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script>
+
+    window.artyom = new Artyom();
+
+    $(document).ready(function(){
+        if(artyom.recognizingSupported()){
+            artyom.ArtyomVoicesIdentifiers["ko-KR"] = ["Google 한국의", "ko-KR", "ko_KR"];
+
+            for(var key in artyom.ArtyomVoicesIdentifiers){
+                var option = document.createElement('option');
+                option.value = key;
+                option.text = artyom.ArtyomVoicesIdentifiers[key][0];
+                $("#lang").append(option);
+            }
+            $("#lang").val("ko-KR");
+
+        }else{
+            alert("지원하지 않는 브라우저 입니다.");
+        }
+
+    });
+
+</script>
+
+</body>
+</html>

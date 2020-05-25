@@ -1,0 +1,33 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static 'css/test.css' %}">
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+
+    <title>MAIN VIEW</title>
+</head>
+<body>
+
+<p class="test">메인 화면 뷰 입니다</p>
+
+<div id="container">
+	<video autoplay="true" class="videoElement">
+	</video>
+</div>
+
+<button id="capture">Capture</button>
+
+<canvas id="snapshot" width=320 height=240></canvas>
+
+<form name = "test3" method='post' action='' enctype="multipart/form-data">
+	{% csrf_token %}
+    <input type="file" name="myfile" class="file_test">
+	<input type="submit" class="auto_send_image">
+</form>
+
+<script src="{% static 'js/script.js' %}"></script>
+
+</body>
+</html>

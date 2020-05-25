@@ -1,0 +1,175 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta name="description" content="sign-language_auto_translate"/>
+    <meta name="author" content="수어지교"/>
+    <title>수어 자동 통역 서비스</title>
+    <!-- Font Awesome icons (free version)-->
+    <script src="https://use.fontawesome.com/releases/v5.12.1/js/all.js" crossorigin="anonymous"></script>
+    <!-- Google fonts-->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css"/>
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet"
+          type="text/css"/>
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet">
+<link rel="icon" href="data:;base64,iVBORw0KGgo=">
+    <!-- 여기는 음성 쪽 -->
+    <script data-ad-client="ca-pub-2077999268380568" async
+            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+</head>
+<body id="page-top" style="background-color: lemonchiffon">
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+        integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+        crossorigin="anonymous"></script>
+
+<!-- Navigation-->
+<nav class="navbar navbar-expand-lg bg-secondary text-uppercase fixed-top" id="mainNav">
+    <div class="container" style="color: white">
+        <a class="navbar-brand js-scroll-trigger">수어자동통역서비스</a>
+        <div style="font-family: Times New Roman">
+            촬영
+            <button type="button" class="btn btn-success">시작</button>
+            <button type="button" class="btn btn-success">종료</button>
+            방설정 <a href="/RoomSetting" style="color: white">
+            <button type="button" class="btn btn-success">방설정</button>
+        </a>
+            대화종료 <a href="/index" style="color: white">
+            <button type="button" class="btn btn-success">대화종료</button>
+        </a>
+        </div>
+    </div>
+</nav>
+
+<!-- 음성 section-->
+<section class="page-section START" style="float: left;width: 50%" id="START">
+    <div class="container" style="padding: 10px">
+        <div class="row">
+            <h2 style="font-family:'Times New Roman';margin: auto">언어: </h2>
+            <div class="col-sm-10 form-inline">
+                <select class="form-control" id="language"></select>
+            </div>
+        </div>
+
+        <div class="row" style="font-size: 40px;font-family: Verdana;font-weight: bolder">
+            <div class="col-md-10 col-md-offset-1">
+                <div id="contents" name="contents" class="well" style="padding: 10px">
+                    <div id="final"></div>
+                    <div id="interim"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 수어 section -->
+<aside class="page-section START" style="float: right;width: 50%;height:100%" id="START">
+    <div class="container" style="padding: 10px">
+
+        <video autoplay="true" class="videoElement"></video>
+        <canvas id="snapshot" width=320 height=240></canvas>
+        <button id="capture">Capture</button>
+        <form name="test3" method='post' action='' enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="file" name="myfile" class="file_test">
+            <input type="submit" class="auto_send_image">
+        </form>
+    </div>
+    <div style="background-color: yellow;padding: 10px;height: 200px;width: 90%;border-style: solid;margin-left: 5%;margin-right: 5%">
+        텍스트
+    </div>
+</aside>
+
+<!-- Scroll to Top Button (Only visible on small and extra-small screen sizes)-->
+<div class="scroll-to-top d-lg-none position-fixed">
+    <a class="js-scroll-trigger d-block text-center text-white rounded" href="#page-top"><i
+            class="fa fa-chevron-up"></i></a>
+</div>
+
+<!-- 여기는 음성 쪽 -->
+<script src="../static/js/script.js"></script>
+<script src="../static/js/common.js"></script>
+<script src="../static/js/artyom.window.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script>
+
+    window.artyom = new Artyom();
+    var UserDictation = null;
+    var finalHistory = {};
+
+    $(document).ready(function () {
+        if (artyom.recognizingSupported()) {
+            artyom.ArtyomVoicesIdentifiers["ko-KR"] = ["Google 한국의", "ko-KR", "ko_KR"];
+
+            for (var key in artyom.ArtyomVoicesIdentifiers) {
+                var option = document.createElement('option');
+                option.value = key;
+                option.text = artyom.ArtyomVoicesIdentifiers[key][0];
+                $("#language").append(option);
+            }
+
+            $("#language").val("ko-KR");
+            initArtyom("ko-KR");
+
+        } else {
+            alert("지원하지 않는 브라우저 입니다.");
+        }
+
+        $("#language").on("change", function () {
+            initArtyom($(this).val());
+        });
+    });
+
+    function initArtyom(lang) {
+
+        artyom.initialize({
+            lang: lang
+            , debug: false
+        }).then(function () {
+
+            if (UserDictation) {
+                UserDictation.stop();
+            }
+
+            UserDictation = artyom.newDictation({
+                continuous: true, // Enable continuous if HTTPS connection
+                onResult: function (text, temporal) {
+                    $("#contents #interim").text(text);
+
+                    for (var idx in temporal) {
+                        if (finalHistory[temporal[idx].transcript + temporal[idx].confidence]) {
+                            //이미 있음
+                        } else {
+                            finalHistory[temporal[idx].transcript + temporal[idx].confidence] = 1;
+                            var newDiv = document.createElement("div");
+                            $("#contents #final").append(newDiv);
+                            $("#contents #final div").last().text(temporal[idx].transcript);
+                            $("#contents #interim").text("");
+                        }
+                    }
+                },
+                onStart: function () {
+                    console.log("Dictation started by the user");
+                },
+                onEnd: function () {
+                    console.log("Dictation stopped by the user");
+                }
+            });
+            UserDictation.start();
+
+        }).catch(function (err) {
+            alert(JSON.stringify(err));
+        });
+    }
+</script>
+</body>
+</html>
