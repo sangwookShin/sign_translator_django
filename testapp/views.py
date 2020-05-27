@@ -26,7 +26,7 @@ def communication(request):
         suffix = datetime.datetime.now().strftime("%y%m%d_%H%M%S")
         filename = "_".join([basename, suffix])
 
-        filename = './media/'+filename+'.jpg'  # I assume you have a way of picking unique filenames
+        filename = './openpose_source/examples/image/'+filename+'.jpg'  # I assume you have a way of picking unique filenames
         with open(filename, 'wb') as f:
             f.write(imgdata)
         return HttpResponse('test')
