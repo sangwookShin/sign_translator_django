@@ -7,5 +7,13 @@
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
       <jdbc-url>jdbc:sqlite:C:\Users\SMH\PycharmProjects\test_django\db.sqlite3</jdbc-url>
     </data-source>
+    <data-source source="LOCAL" name="Django default" uuid="4d7c5ea8-b0e8-4d59-89f2-ad8df81db901">
+      <driver-ref>sqlite.xerial</driver-ref>
+      <synchronize>true</synchronize>
+      <imported>true</imported>
+      <remarks>$PROJECT_DIR$/test_django/settings.py</remarks>
+      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
+      <jdbc-url>jdbc:sqlite:C:\Users\s-01\Desktop\sign_translator_djangomaster\db.sqlite3</jdbc-url>
+    </data-source>
   </component>
 </project>

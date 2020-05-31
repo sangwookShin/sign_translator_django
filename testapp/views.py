@@ -34,9 +34,6 @@ def communication(request):
         print(2)
         return render(request, '../templates/communication.html', {})
 
-def RoomSetting(request):
-    return render(request, '../templates/RoomSetting.html', {})
-
 # def mainView(request):
 #     if request.method == 'POST' and request.FILES['myfile']:
 #         myfile = request.FILES['myfile']
