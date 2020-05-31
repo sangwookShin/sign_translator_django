@@ -1,7 +1,7 @@
 var video = document.querySelector(".videoElement");
 
 if (navigator.mediaDevices.getUserMedia) {
-    navigator.mediaDevices.getUserMedia({video: true, audio: true})
+    navigator.mediaDevices.getUserMedia({video: true, audio: false})
         .then(function (stream) {
             video.srcObject = stream;
 
@@ -15,7 +15,7 @@ if (navigator.mediaDevices.getUserMedia) {
                     snapshotCanvas.height);
 
                 //이미지 전송
-                    var dataUrl = snapshotCanvas.toDataURL("image/jpg", 1.0)
+                var dataUrl = snapshotCanvas.toDataURL("image/jpg", 1.0)
                 console.log(dataUrl)
 
                 var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
@@ -31,9 +31,13 @@ if (navigator.mediaDevices.getUserMedia) {
             autoCapture = setInterval(function () {
                 captureButton.click()
 
-                if(time == 4)  clearInterval(autoCapture)
+                console.log(time)
+
+                if(time == 50)  clearInterval(autoCapture)
+
+                time++;
                 //document.test3.submit()
-            }, 1000);
+            }, 100);
         })
         .catch(function (err0r) {
             console.log(err0r)

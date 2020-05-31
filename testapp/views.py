@@ -23,7 +23,7 @@ def communication(request):
         imgdata = base64.b64decode(temp)
 
         basename = "image"
-        suffix = datetime.datetime.now().strftime("%y%m%d_%H%M%S")
+        suffix = datetime.datetime.now().strftime("%y%m%d_%H%M%S_%f")
         filename = "_".join([basename, suffix])
 
         filename = './media/'+filename+'.jpg'  # I assume you have a way of picking unique filenames
