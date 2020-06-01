@@ -254,4 +254,9 @@ fabric.properties
 
 # Pyre type checker
 
+# openpose in, out
+./openpose_source/examples/
+./openpose_source/out/
+
+
 # End of https://www.gitignore.io/api/django,python,pycharm

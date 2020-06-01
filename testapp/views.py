@@ -1,18 +1,21 @@
-from PIL import Image
 from django.shortcuts import render
-from django.conf import settings
-from django.core.files.storage import FileSystemStorage
-
-from django.http import HttpResponseRedirect, HttpResponse
-# Create your views here.
-
 import base64
 import datetime
+import os
+import json
+import numpy as np
+import cv2
+import joblib
+
+from django.http import HttpResponse
+from django.shortcuts import render
+
+
+# Create your views here.
 
 
 def index(request):
     return render(request, '../templates/index.html', {})
-
 
 
 def communication(request):
@@ -23,10 +26,10 @@ def communication(request):
         imgdata = base64.b64decode(temp)
 
         basename = "image"
-        suffix = datetime.datetime.now().strftime("%y%m%d_%H%M%S")
+        suffix = datetime.datetime.now().strftime("%y%m%d_%H%M%S_%f")
         filename = "_".join([basename, suffix])
 
-        filename = './openpose_source/examples/image/'+filename+'.jpg'  # I assume you have a way of picking unique filenames
+        filename = './openpose_source/examples/image/' + filename + '.jpg'
         with open(filename, 'wb') as f:
             f.write(imgdata)
         return HttpResponse('test')
@@ -34,16 +37,75 @@ def communication(request):
         print(2)
         return render(request, '../templates/communication.html', {})
 
+
 def RoomSetting(request):
     return render(request, '../templates/RoomSetting.html', {})
 
-# def mainView(request):
-#     if request.method == 'POST' and request.FILES['myfile']:
-#         myfile = request.FILES['myfile']
-#         fs = FileSystemStorage()
-#         filename = fs.save(myfile.name, myfile)
-#         uploaded_file_url = fs.url(filename)
-#
-#
-#     else :
-#         return render(request, 'index.html')
+
+def sln_translate(request):
+    TIME_STAMP = 50
+
+    root_path = os.getcwd();
+    print(root_path)
+    os.chdir("./openpose_source")
+    print(os.getcwd())
+
+    image_dir = root_path + "/openpose_source/examples/image/"
+    frames_list = os.listdir(image_dir)
+    l = len(frames_list)
+    z = int(l / (TIME_STAMP - 1))
+    y = int((l - z*(TIME_STAMP - 1)) / 2)
+
+    selected_frame = [frames_list[y + j*z] for j in range(TIME_STAMP)]
+    print(selected_frame)
+    for image in frames_list:
+        if image not in selected_frame:
+            print(image)
+            os.remove(image_dir + "/" + image)
+
+    width, height, _ = cv2.imread(image_dir + "/" + selected_frame[0], cv2.IMREAD_UNCHANGED).shape
+    print(width, height)
+
+    openpose_command = ".\\bin\OpenPoseDemo.exe --image_dir .\examples\image\ --write_json .\out\ 0 --display 0 --render_pose 0 --face --hand"
+    os.system(openpose_command)
+
+    os.chdir(root_path)
+
+    feature_list = []
+    directory_path = os.path.abspath(root_path + "/openpose_source/out/")
+    for json_file in os.listdir(directory_path):
+        with open(os.path.abspath(directory_path + "/" + json_file)) as json_file:
+            file = json.load(json_file)
+
+        people = file["people"][0]
+        image_feature = []
+        image_feature.extend(people["pose_keypoints_2d"][:8*3])
+        image_feature.extend(people["pose_keypoints_2d"][15*3:19*3])
+        image_feature.extend(people["face_keypoints_2d"])
+        image_feature.extend(people["hand_left_keypoints_2d"])
+        image_feature.extend(people["hand_right_keypoints_2d"])
+        del image_feature[2::3]
+        feature_list.append(image_feature)
+
+    np_input = np.array(feature_list)
+    np_input[np_input != 0] = np.nan
+
+    for i in range(np_input.shape[1]):
+        if i%2==0:
+            np_input[:, i] = np_input[:, i] / width
+        else:
+            np_input[:, i] = np_input[:, i] / height
+
+    model_path = root_path + "/testapp/model/"
+    normalization_model = joblib.load(model_path + "standard_total_normalization.pkl")
+    norm_data = normalization_model.transform(np_input)
+    norm_data[np.isnan(norm_data)] = -99
+
+    print(norm_data)
+
+    # 사용한 image 제거
+    # frames_list = os.listdir(image_dir)
+    # for image in frames_list:
+    #     os.remove(image_dir + "/" + image)
+
+    return HttpResponse('test2')
