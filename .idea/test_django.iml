@@ -14,7 +14,11 @@
   </component>
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$" />
+<<<<<<< HEAD
     <orderEntry type="jdk" jdkName="Python 3.7 (sign_translator_django)" jdkType="Python SDK" />
+=======
+    <orderEntry type="jdk" jdkName="Python 3.7" jdkType="Python SDK" />
+>>>>>>> ae2fcb700f1949bd570bc6816d92479fa1ae631e
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="TemplatesService">

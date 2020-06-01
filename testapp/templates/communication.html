@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
     <meta name="description" content="sign-language_auto_translate"/>
     <meta name="author" content="수어지교"/>
-    <title>수어 자동 통역 서비스</title>
+    <title>수어지교</title>
     <!-- Font Awesome icons (free version)-->
     <script src="https://use.fontawesome.com/releases/v5.12.1/js/all.js" crossorigin="anonymous"></script>
     <!-- Google fonts-->
@@ -15,12 +15,11 @@
           type="text/css"/>
     <!-- Core theme CSS (includes Bootstrap)-->
     <link href="{% static 'css/styles.css' %}" rel="stylesheet">
-<link rel="icon" href="data:;base64,iVBORw0KGgo=">
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
     <!-- 여기는 음성 쪽 -->
-    <script data-ad-client="ca-pub-2077999268380568" async
-            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script data-ad-client="ca-pub-2077999268380568" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 </head>
-<body id="page-top" style="background-color: lemonchiffon">
+<body id="page-top">
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
         integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
         crossorigin="anonymous"></script>
@@ -34,13 +33,11 @@
 <!-- Navigation-->
 <nav class="navbar navbar-expand-lg bg-secondary text-uppercase fixed-top" id="mainNav">
     <div class="container" style="color: white">
-        <a class="navbar-brand js-scroll-trigger">수어자동통역서비스</a>
+        <a class="navbar-brand js-scroll-trigger">수어지교</a>
         <div style="font-family: Times New Roman">
             촬영
-            <button type="button" class="btn btn-success">시작</button>
-            <button type="button" class="btn btn-success">종료</button>
-            방설정 <a href="/RoomSetting" style="color: white">
-            <button type="button" class="btn btn-success">방설정</button>
+            <button type="button" class="btn btn-success" id="video_start">시작</button>
+            <button type="button" class="btn btn-success" id="video_close" disabled>종료</button>
         </a>
             대화종료 <a href="/index" style="color: white">
             <button type="button" class="btn btn-success">대화종료</button>
@@ -74,18 +71,15 @@
 <aside class="page-section START" style="float: right;width: 50%;height:100%" id="START">
     <div class="container" style="padding: 10px">
         {% csrf_token %}
-        <video autoplay="true" class="videoElement"></video>
-        <canvas id="snapshot" width=320 height=240></canvas>
-        <button id="capture">Capture</button>
-        <form name="test3" method='post' action='' enctype="multipart/form-data">
 
-            <input type="file" name="myfile" class="file_test">
-            <input type="submit" class="auto_send_image">
-        </form>
+        <video autoplay="true" class="videoElement" style="height: 360px; width: 640px;  margin-right: 5%;margin-left: 7%;border-style: solid"></video>
     </div>
     <div style="background-color: yellow;padding: 10px;height: 200px;width: 90%;border-style: solid;margin-left: 5%;margin-right: 5%">
         텍스트
     </div>
+
+    <canvas id="snapshot" width="1280px", height="720px" style="height: 360px; width: 640px"></canvas>
+    <button id="capture"  style="visibility: hidden; height: 0px; width: 0px">Capture</button>
 </aside>
 
 <!-- Scroll to Top Button (Only visible on small and extra-small screen sizes)-->
