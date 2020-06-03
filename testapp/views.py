@@ -8,6 +8,7 @@ import cv2
 import joblib
 import keras
 from testapp.datasource import datasource
+import subprocess
 
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
@@ -70,8 +71,10 @@ def sln_translate(request):
     width, height, _ = cv2.imread(image_dir + "/" + selected_frame[0], cv2.IMREAD_UNCHANGED).shape
     print(width, height)
 
-    # openpose_command = ".\\bin\OpenPoseDemo.exe --image_dir .\examples\image\ --write_json .\out\ 0 --display 0 --render_pose 0 --face --hand"
-    # os.system(openpose_command)
+    openpose_command = [".\\bin\OpenPoseDemo.exe", "--image_dir", ".\examples\image\\", "--write_json", ".\out\\", "0", "--display", "0", "--render_pose", "0", "--face", "--hand"]
+    proc = subprocess.Popen(openpose_command)
+
+    proc.wait()
 
     os.chdir(root_path)
     print(os.getcwd())
@@ -94,7 +97,7 @@ def sln_translate(request):
 
     np_input = np.array(feature_list)
     print(np_input)
-    np_input[np_input == 0] = np.nan
+    # np_input[np_input == 0] = np.nan
 
     for i in range(np_input.shape[1]):
         if i % 2 == 0:
@@ -103,23 +106,22 @@ def sln_translate(request):
             np_input[:, i] = np_input[:, i] / height
 
     model_path = root_path + "/testapp/model/"
-    normalization_model = joblib.load(model_path + "standard_total_normalization.pkl")
-    norm_data = normalization_model.transform(np_input)
-    norm_data[np.isnan(norm_data)] = -99
+    # normalization_model = joblib.load(model_path + "standard_total_normalization.pkl")
+    # norm_data = normalization_model.transform(np_input)
+    # norm_data[np.isnan(norm_data)] = -99
+    #
+    # print(norm_data)
 
-    print(norm_data)
-
-    file = open(os.path.abspath(model_path + "SLT-model-005-67.json"), 'r')
+    file = open(os.path.abspath(model_path + "SLT-model-101-68.json"), 'r')
     loaded_model_json = file.read()
     file.close()
-    print(loaded_model_json)
-    print(keras.__version__)
     model = model_from_json(loaded_model_json)
-    model.load_weights(os.path.abspath(model_path + "SLT-model-005-67.h5"))
+    model.load_weights(os.path.abspath(model_path + "SLT-model-101-68.h5"))
 
-    # model = load_model(model_path + "SLT-model-011-57.h5")
+    print(model.summary())
 
-    norm_data = np.delete(norm_data, slice(24, 164), 1)
+    # without face keypints(140)
+    norm_data = np.delete(np_input, slice(24, 164), 1)
     norm_data = norm_data.reshape((1, 50, 108))
 
     predict = model.predict(norm_data)
@@ -129,9 +131,16 @@ def sln_translate(request):
     message = datasource.dic_label[max_index]
     probability = predict[0][max_index]
 
-    # 사용한 image 제거
-    # frames_list = os.listdir(image_dir)
-    # for image in frames_list:
-    #     os.remove(image_dir + "/" + image)
+    dic_response = {"message": message, "probability": str(probability), "index": str(max_index)}
 
-    return HttpResponse(f'message : {message}, index : {max_index}, probability : {probability}')
+    # 사용한 image 제거
+    frames_list = os.listdir(image_dir)
+    json_list = os.listdir(directory_path)
+    for image, file in zip(frames_list, json_file):
+        os.remove(image_dir + "/" + image)
+        # os.remove(directory_path + "/" + file)
+
+    return HttpResponse(json.dumps(dic_response, ensure_ascii=False)
+                        , status=202
+                        , content_type="application/json"
+                        , charset="utf-8")
