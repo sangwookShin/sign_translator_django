@@ -13,13 +13,12 @@ if (navigator.mediaDevices.getUserMedia) {
 }
 
 var snapshotCanvas = document.getElementById('snapshot');
+var canvas = snapshotCanvas.getContext('2d');
+canvas.width = video.videoWidth;
+canvas.height = video.videoHeight;
 
 function sendImage() {
-    var canvas = snapshotCanvas.getContext('2d');
     // Draw the video frame to the canvas
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-
     canvas.drawImage(video, 0, 0);
     //이미지 전송
     var dataUrl = snapshotCanvas.toDataURL("image/png")
@@ -40,16 +39,29 @@ video_start.addEventListener('click', function () {
     time = 0;
     autoCapture = setInterval(function () {
         sendImage()
-        console.log(time)
         time++;
         if (time >= 50) {
             video_close.disabled = false
         }
-    }, 100);
+    }, 1);
 })
 
 video_close.addEventListener('click', function () {
     video_start.disabled = false
     video_close.disabled = true
     clearInterval(autoCapture)
+
+    $.ajax({
+        type: 'GET',
+        url: '/translate/',
+        data: {},
+        success:function(result){
+                        console.log(result);
+                        console.log(result[0]);
+                        console.log(result[1]);
+                        console.log(result.message);
+
+                        $("#sign_language_div").append(result)
+                    }
+    })
 })

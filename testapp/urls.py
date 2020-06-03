@@ -5,4 +5,5 @@ urlpatterns = [
     path("", views.index, name='index'),
     path("communication/", views.communication),
     path("index/", views.index),
+    path("translate/", views.sln_translate),
 ]

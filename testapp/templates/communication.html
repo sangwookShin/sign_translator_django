@@ -58,7 +58,7 @@
 
         <div class="row" style="font-size: 40px;font-family: Verdana;font-weight: bolder">
             <div class="col-md-10 col-md-offset-1">
-                <div id="contents" name="contents" class="well" style="padding: 10px">
+                <div id="contents" name="contents" class="well" style="padding: 10px; overFlow : scroll; height:500px">
                     <div id="final"></div>
                     <div id="interim"></div>
                 </div>
@@ -74,11 +74,11 @@
 
         <video autoplay="true" class="videoElement" style="height: 360px; width: 640px;  margin-right: 5%;margin-left: 7%;border-style: solid"></video>
     </div>
-    <div style="background-color: yellow;padding: 10px;height: 200px;width: 90%;border-style: solid;margin-left: 5%;margin-right: 5%">
-        텍스트
+    <div id="sign_language_div"style="background-color: yellow;padding: 10px;height: 200px;width: 90%;border-style: solid;margin-left: 5%;margin-right: 5%">
+
     </div>
 
-    <canvas id="snapshot" width="1280px", height="720px" style="height: 360px; width: 640px"></canvas>
+    <canvas id="snapshot" width="1280px", height="720px" style="visibility: hidden; width: 0px;height: 0px"></canvas>
     <button id="capture"  style="visibility: hidden; height: 0px; width: 0px">Capture</button>
 </aside>
 
@@ -138,6 +138,8 @@
                 continuous: true, // Enable continuous if HTTPS connection
                 onResult: function (text, temporal) {
                     $("#contents #interim").text(text);
+
+                   $(".well").scrollTop($(".well")[0].scrollHeight)
 
                     for (var idx in temporal) {
                         if (finalHistory[temporal[idx].transcript + temporal[idx].confidence]) {
