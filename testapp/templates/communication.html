@@ -17,7 +17,8 @@
     <link href="{% static 'css/styles.css' %}" rel="stylesheet">
     <link rel="icon" href="data:;base64,iVBORw0KGgo=">
     <!-- 여기는 음성 쪽 -->
-    <script data-ad-client="ca-pub-2077999268380568" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script data-ad-client="ca-pub-2077999268380568"
+            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 </head>
 <body id="page-top">
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
@@ -38,27 +39,29 @@
             촬영
             <button type="button" class="btn btn-success" id="video_start">시작</button>
             <button type="button" class="btn btn-success" id="video_close" disabled>종료</button>
-        </a>
-            대화종료 <a href="/index" style="color: white">
-            <button type="button" class="btn btn-success">대화종료</button>
-        </a>
+
+            대화종료
+            <a href="/index" style="color: white">
+                <button type="button" class="btn btn-success">대화종료</button>
+            </a>
+
         </div>
     </div>
 </nav>
 
 <!-- 음성 section-->
-<section class="page-section START" style="float: left;width: 50%" id="START">
+<section class="page-section START" style="float: left;width: 50%;height:100%" id="START">
     <div class="container" style="padding: 10px">
-        <div class="row">
+        <div class="row" style="margin-bottom: 20px">
             <h2 style="font-family:'Times New Roman';margin: auto">언어: </h2>
             <div class="col-sm-10 form-inline">
                 <select class="form-control" id="language"></select>
             </div>
         </div>
 
-        <div class="row" style="font-size: 40px;font-family: Verdana;font-weight: bolder">
-            <div class="col-md-10 col-md-offset-1">
-                <div id="contents" name="contents" class="well" style="padding: 10px; overFlow : scroll; height:500px">
+        <div class="row" style="font-size: 40px;font-family: Verdana;font-weight: bolder; width: 1150px">
+            <div class="col-md-10 col-md-offset-1" style="margin-left: 10px;">
+                <div id="contents" name="contents" class="well" style="padding: 10px; overFlow : auto; height:700px">
                     <div id="final"></div>
                     <div id="interim"></div>
                 </div>
@@ -68,18 +71,19 @@
 </section>
 
 <!-- 수어 section -->
-<aside class="page-section START" style="float: right;width: 50%;height:100%" id="START">
-    <div class="container" style="padding: 10px">
+<aside class="page-section START" style="float: right;width: 50%;height:900px" id="START">
+    <div class="container">
         {% csrf_token %}
-
-        <video autoplay="true" class="videoElement" style="height: 360px; width: 640px;  margin-right: 5%;margin-left: 7%;border-style: solid"></video>
+        <video autoplay="true" class="videoElement"
+               style="height: 495px; width: 880px; border-style: solid; border-color: #2c3e50; margin-left: 10px; margin-top: 10px"></video>
     </div>
-    <div id="sign_language_div"style="background-color: yellow;padding: 10px;height: 200px;width: 90%;border-style: solid;margin-left: 5%;margin-right: 5%">
-
+    <div id="sign_language_div"
+         style="padding: 10px; height:300px;width: 880px; border-style: solid; border-color: #2c3e50;margin-left: 35px; margin-top: 20px; font-size: 40px">
     </div>
 
-    <canvas id="snapshot" width="1280px", height="720px" style="visibility: hidden; width: 0px;height: 0px"></canvas>
-    <button id="capture"  style="visibility: hidden; height: 0px; width: 0px">Capture</button>
+    <canvas id="snapshot" width="1280px" , height="720px"
+            style="visibility: hidden; width: 0px;height: 0px; padding: 0px;margin: 0px"></canvas>
+    <button id="capture" style="visibility: hidden; height: 0px; width: 0px; padding: 0px;margin: 0px">Capture</button>
 </aside>
 
 <!-- Scroll to Top Button (Only visible on small and extra-small screen sizes)-->
@@ -139,7 +143,7 @@
                 onResult: function (text, temporal) {
                     $("#contents #interim").text(text);
 
-                   $(".well").scrollTop($(".well")[0].scrollHeight)
+                    $(".well").scrollTop($(".well")[0].scrollHeight)
 
                     for (var idx in temporal) {
                         if (finalHistory[temporal[idx].transcript + temporal[idx].confidence]) {
