@@ -12,13 +12,9 @@ from testapp.datasource import datasource
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from tensorflow.keras.models import model_from_json, load_model
-<<<<<<< HEAD
 from django.shortcuts import render
 import requests
-=======
 
-
->>>>>>> fbc6154e648b5eaca88e3d2c9566b23db185116f
 # Create your views here.
 
 
