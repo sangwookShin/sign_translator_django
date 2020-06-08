@@ -104,6 +104,7 @@
     var UserDictation = null;
     var finalHistory = {};
 
+    // 초기 한국어 setting
     $(document).ready(function () {
         if (artyom.recognizingSupported()) {
             artyom.ArtyomVoicesIdentifiers["ko-KR"] = ["Google 한국의", "ko-KR", "ko_KR"];
@@ -141,35 +142,37 @@
             UserDictation = artyom.newDictation({
                 continuous: true, // Enable continuous if HTTPS connection
                 onResult: function (text, temporal) {
-                    $("#contents #interim").text(text);
+                    let comment = $("#contents #interim").text()
+                    if(text !== "")
+                        $("#contents #interim").text(text);
+                    else{
+                        oldText = $("#contents #final").text() + comment;
+                        $("#contents #final").text(oldText);
+                    }
 
                     $(".well").scrollTop($(".well")[0].scrollHeight)
-
-                    for (var idx in temporal) {
-                        if (finalHistory[temporal[idx].transcript + temporal[idx].confidence]) {
-                            //이미 있음
-                        } else {
-                            finalHistory[temporal[idx].transcript + temporal[idx].confidence] = 1;
-                            var newDiv = document.createElement("div");
-                            $("#contents #final").append(newDiv);
-                            $("#contents #final div").last().text(temporal[idx].transcript);
-                            $("#contents #interim").text("");
-                        }
-                    }
                 },
                 onStart: function () {
                     console.log("Dictation started by the user");
                 },
                 onEnd: function () {
                     console.log("Dictation stopped by the user");
+                    $("#contents #interim").text("");
                 }
             });
-            UserDictation.start();
 
         }).catch(function (err) {
             alert(JSON.stringify(err));
         });
     }
+
+    $("#artyon-start").click(() => {
+        UserDictation.start();
+    });
+
+    $("#artyon-stop").click(() => {
+        UserDictation.stop();
+    })
 </script>
 </body>
 </html>

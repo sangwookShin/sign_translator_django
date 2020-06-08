@@ -20,7 +20,7 @@ class TranslateSLN():
         self.y = None
 
     def translate_sln(self):
-        image_path = ROOT_PATH + "/openpose_source/exmaples/image/"
+        image_path = os.path.abspath(ROOT_PATH + "/openpose_source/examples/image/")
         frame_list = os.listdir(image_path)
         self._calculate_baseline(frame_list)
 
@@ -30,25 +30,25 @@ class TranslateSLN():
         # 선택된 FRMAME을 제외하고 나머지 FRAME제거
         for frame in frame_list:
             if frame not in selected_frame:
-                os.remove(selected_frame + "/" + frame)
+                os.remove(image_path + "/" + frame)
 
         # frame의 width와 height계산
-        width, height = cv2.imread(image_path + "/" + selected_frame[0], cv2.IMREAD_UNCHANGED).shape
+        width, height, _ = cv2.imread(image_path + "/" + selected_frame[0], cv2.IMREAD_UNCHANGED).shape
         print(width, height)
 
         self._run_openpose()
 
         # feature 추출
-        json_file_path = ROOT_PATH + "/openpose_source/out/"
+        json_file_path = os.path.abspath(ROOT_PATH + "/openpose_source/out/")
         np_feature = self._get_feature_of_images(json_file_path, width, height)
 
         # without face key point
         np_feature = np.delete(np_feature, slice(24, 164), 1)
 
         # load GRU model
-        model_path = ROOT_PATH + "/testapp/model/"
+        model_path = os.path.abspath(ROOT_PATH + "/testapp/model/")
         with open(os.path.abspath(model_path + "SLT-model-101-68.json", r)) as json_file:
-            loaded_model_json = json_file_path.read()
+            loaded_model_json = json_file.read()
 
         model = model_from_json(loaded_model_json)
         model.load_weihts(os.path.abspath(model_path + "SLT-model-101-68.h5"))
