@@ -56,12 +56,9 @@ video_close.addEventListener('click', function () {
         url: '/translate/',
         data: {},
         success: function (result) {
-            console.log(result);
-            console.log(result[0]);
-            console.log(result[1]);
             console.log(result.message);
 
-            $("#sign_language_div").append(result)
+            $("#sign_language_div").append(result.message + "(" + result.probability + ")");
         }
     })
 })
