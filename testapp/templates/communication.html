@@ -143,13 +143,15 @@
 
             UserDictation = artyom.newDictation({
                 continuous: true, // Enable continuous if HTTPS connection
-                onResult: function (text, temporal) {
-                    let comment = $("#contents #interim").text()
-                    if(text !== "")
+                onResult: function (text) {
+                    if (text !== "")
                         $("#contents #interim").text(text);
-                    else{
-                        oldText = $("#contents #final").text() + comment;
-                        $("#contents #final").text(oldText);
+                    else {
+                        newTag = document.createElement("p");
+                        newTag.textContent = $("#contents #interim").text();
+                        $("#contents #final").append(newTag);
+
+                        $("#contents #interim").text("");
                     }
 
                     $(".well").scrollTop($(".well")[0].scrollHeight)
