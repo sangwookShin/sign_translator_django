@@ -42,8 +42,8 @@ def minimize_face(X_):
             temp_frame = X_[i][:24] #body
         else:
             temp_frame += X_[i][:24] #body
-        temp_frame += X_[i][96:119] #eye
-        temp_frame += X_[i][120:143] #outer-mouth
+        temp_frame += X_[i][96:120] #eye
+        temp_frame += X_[i][120:144] #outer-mouth
         temp_frame += X_[i][164:248] #left hand and right hand
         array.append(temp_frame)
 
