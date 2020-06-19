@@ -1,6 +1,30 @@
 import pandas as pd
+import numpy as np
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
+from sklearn.externals import joblib
 
-def wh_method(df_train, df_test, without_face):
+##every data should be in pandas dataframe
+
+class ConvertNormalization:
+        def __init__(self, method="minmax"):
+            self.scaler = None
+            self.method = method
+        
+            if method == "minmax":
+                self.scaler = MinMaxScaler()
+            elif method == "standard":
+                self.scaler = StandardScaler()
+            
+        def convert_fit(self, points):
+            self.scaler.fit(points)
+        
+        def convert_transform(self, target_points):
+            return self.scaler.transform(target_points)
+    
+        def convert_fit_transform(self, points):
+            return self.scaler.fit_transform(points)
+            
+def get_header(df_train, df_test, without_face):
     if without_face:
 
         df_train.columns = ['nose_x','nose_y','neck_x','neck_y','r_shoulder_x','r_shoulder_y','r_elbow_x','r_elbow_y','r_wrist_x','r_wrist_y','l_shoulder_x','l_shoulder_y','l_elbow_x','l_elbow_y','l_wrist_x','l_wrist_y','r_eye_x','r_eye_y','l_eye_x','l_eye_y','r_ear_x','r_ear_y','l_ear_x','lear_y','l_hand_0_x','l_hand_0_y','l_hand_1_x','l_hand_1_y','l_hand_2_x','l_hand_2_y','l_hand_3_x','l_hand_3_y','l_hand_4_x','l_hand_4_y','l_hand_5_x','l_hand_5_y','l_hand_6_x','l_hand_6_y','l_hand_7_x','l_hand_7_y','l_hand_8_x','l_hand_8_y','l_hand_9_x','l_hand_9_y','l_hand_10_x','l_hand_10_y','l_hand_11_x','l_hand_11_y','l_hand_12_x','l_hand_12_y','l_hand_13_x','l_hand_13_y','l_hand_14_x','l_hand_14_y','l_hand_15_x','l_hand_15_y','l_hand_16_x','l_hand_16_y','l_hand_17_x','l_hand_17_y','l_hand_18_x','l_hand_18_y','l_hand_19_x','l_hand_19_y','l_hand_20_x','l_hand_20_y','r_hand_0_x','r_hand_0_y','r_hand_1_x','r_hand_1_y','r_hand_2_x','r_hand_2_y','r_hand_3_x','r_hand_3_y','r_hand_4_x','r_hand_4_y','r_hand_5_x','r_hand_5_y','r_hand_6_x','r_hand_6_y','r_hand_7_x','r_hand_7_y','r_hand_8_x','r_hand_8_y','r_hand_9_x','r_hand_9_y','r_hand_10_x','r_hand_10_y','r_hand_11_x','r_hand_11_y','r_hand_12_x','r_hand_12_y','r_hand_13_x','r_hand_13_y','r_hand_14_x','r_hand_14_y','r_hand_15_x','r_hand_15_y','r_hand_16_x','r_hand_16_y','r_hand_17_x','r_hand_17_y','r_hand_18_x','r_hand_18_y','r_hand_19_x','r_hand_19_y','r_hand_20_x','r_hand_20_y']
@@ -16,6 +40,26 @@ def wh_method(df_train, df_test, without_face):
     width = 1280
     height = 720
 
+    return df_train, df_test
+    
+def set_standard_point(df_X):
+    temp = []
+
+    for no, row in df_X.iterrows():
+        standard_x, standard_y = row[[2, 3]]
+        result = []
+    
+        for i in range(len(row)):
+            if i % 2 == 0:
+                result.append(row[i] - standard_x)
+            else:
+                result.append(row[i] - standard_y)
+                
+        temp.append(result)
+
+    return pd.DataFrame(temp)
+
+def wh_method(df_train, df_test):
     for feature in df_column:
         if idx % 2 == 0:
             df_train[feature] = df_train[feature] / width
@@ -25,5 +69,29 @@ def wh_method(df_train, df_test, without_face):
             df_test[feature] = df_test[feature] / height
           
         idx += 1
+    
+    return df_train, df_test
+
+def standard_method(df_train, df_test):
+    conv_norm = ConvertNormalization(method="standard")
+
+    train_normalization = conv_norm.convert_fit_transform(df_train)
+    test_normalization = conv_norm.convert_transform(df_test)
+
+    return train_normalization, test_normalization
+
+def norm(df_train, df_test, method, without_face):
+    
+    df_train, df_test = get_header(df_train, df_test, without_face)
+    
+    df_train = set_standard_point(df_train)
+    df_test = set_standard_point(df_test)
+    
+    if method == "wh":
+        df_train, df_test = wh_method(df_train, df_test)
+        
+    elif method == "standard":
+        df_train, df_test = pd.DataFrame(standard_method(df_train, df_test))
 
     return df_train, df_test
+    
