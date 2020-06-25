@@ -5,8 +5,8 @@ import subprocess
 import cv2
 import numpy as np
 from tensorflow_core.python.keras.models import model_from_json
-
 from testapp.datasource import datasource
+import joblib
 
 TIME_STAMP = 50
 ROOT_PATH = os.getcwd()
@@ -35,27 +35,32 @@ class TranslateSLN:
         # frame의 width와 height계산
         width, height, _ = cv2.imread(image_path + "/" + selected_frame[0], cv2.IMREAD_UNCHANGED).shape
 
-        self._run_openpose()
+        # self._run_openpose()
 
         # feature 추출
         json_file_path = os.path.abspath(ROOT_PATH + "/openpose_source/out/")
         np_feature = self._get_feature_of_images(json_file_path, width, height)
 
         # without face key point
-        np_feature = np.delete(np_feature, slice(24, 164), 1)
+        # np_feature = np.delete(np_feature, slice(24, 164), 1)
+
+        # normalization
+        np_feature = self._normalization(np_feature)
+        scaler = joblib.load(os.path.abspath(ROOT_PATH + "/testapp/model/standard_norm_model.pkl"))
+        np_feature = scaler.transform(np_feature)
 
         # load GRU model
         model_path = os.path.abspath(ROOT_PATH + "/testapp/model/")
-        with open(os.path.abspath(model_path + "/SLT-model-101-68.json"), 'r') as json_file:
+        with open(os.path.abspath(model_path + "/SLT-model-001.json"), 'r') as json_file:
             loaded_model_json = json_file.read()
 
         model = model_from_json(loaded_model_json)
-        model.load_weights(os.path.abspath(model_path + "/SLT-model-101-68.h5"))
+        model.load_weights(os.path.abspath(model_path + "/SLT-model-001.h5"))
 
-        predict = model.predict(np_feature.reshape((1, 50, 108)))
+        predict = model.predict(np_feature.reshape((1, 50, 248)))
         max_index = np.argmax(predict[0])
 
-        self._clear_directory(image_path, json_file_path)
+        # self._clear_directory(image_path, json_file_path)
 
         return {
             'message': datasource.dic_label[max_index],
@@ -123,3 +128,24 @@ class TranslateSLN:
         self.l = len(frame_list)
         self.z = int(self.l / (TIME_STAMP - 1))
         self.y = int((self.l - self.z * (TIME_STAMP - 1)) / 2)
+
+    @staticmethod
+    def _position_correction(row):
+        standard_x, standard_y = row[[2, 3]]
+        result = []
+
+        for i in range(len(row)):
+            if i % 2 == 0:
+                result.append(row[i] - standard_x)
+            else:
+                result.append(row[i] - standard_y)
+
+        return result
+
+    def _normalization(self, data):
+        result = []
+
+        for row in data:
+            result.append(self._position_correction(row))
+
+        return np.array(result)
