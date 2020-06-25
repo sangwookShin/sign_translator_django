@@ -60,7 +60,7 @@ class TranslateSLN:
         predict = model.predict(np_feature.reshape((1, 50, 248)))
         max_index = np.argmax(predict[0])
 
-        # self._clear_directory(image_path, json_file_path)
+        self._clear_directory(image_path, json_file_path)
 
         return {
             'message': datasource.dic_label[max_index],
