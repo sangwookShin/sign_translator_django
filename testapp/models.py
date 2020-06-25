@@ -12,7 +12,7 @@ TIME_STAMP = 50
 ROOT_PATH = os.getcwd()
 
 
-class TranslateSLN():
+class TranslateSLN:
 
     def __init__(self):
         self.l = None
@@ -34,7 +34,6 @@ class TranslateSLN():
 
         # frame의 width와 height계산
         width, height, _ = cv2.imread(image_path + "/" + selected_frame[0], cv2.IMREAD_UNCHANGED).shape
-        print(width, height)
 
         self._run_openpose()
 
@@ -47,11 +46,11 @@ class TranslateSLN():
 
         # load GRU model
         model_path = os.path.abspath(ROOT_PATH + "/testapp/model/")
-        with open(os.path.abspath(model_path + "SLT-model-101-68.json", r)) as json_file:
+        with open(os.path.abspath(model_path + "/SLT-model-101-68.json"), 'r') as json_file:
             loaded_model_json = json_file.read()
 
         model = model_from_json(loaded_model_json)
-        model.load_weihts(os.path.abspath(model_path + "SLT-model-101-68.h5"))
+        model.load_weights(os.path.abspath(model_path + "/SLT-model-101-68.h5"))
 
         predict = model.predict(np_feature.reshape((1, 50, 108)))
         max_index = np.argmax(predict[0])
@@ -60,15 +59,16 @@ class TranslateSLN():
 
         return {
             'message': datasource.dic_label[max_index],
-            'probability': predict[0][max_index]
+            'probability': str(predict[0][max_index])
         }
 
-    def _clear_directory(self, image_path, json_path):
+    @staticmethod
+    def _clear_directory(image_path, json_path):
         frame_list = os.listdir(image_path)
         json_file_list = os.listdir(json_path)
 
-        for frame, json_file in zip(frame_list, json_path):
-            os.remove(image_path + "/" + frame_list)
+        for frame, json_file in zip(frame_list, json_file_list):
+            os.remove(image_path + "/" + frame)
             os.remove(json_path + "/" + json_file)
 
         print("Success clearing directory")
@@ -79,13 +79,13 @@ class TranslateSLN():
 
         for file in os.listdir(json_file_path):
             with open(os.path.abspath(json_file_path + "/" + file)) as json_file:
-                json_feature = json.loaad(json_file)
+                json_feature = json.load(json_file)
 
             image_feature = []
-            feature = json_feature["poeple"][0]
+            feature = json_feature["people"][0]
             # body key points
             image_feature.extend(feature["pose_keypoints_2d"][:8 * 3])
-            image_feature.extend(feature['pose_keypoints_2d"][15*3:19*3'])
+            image_feature.extend(feature['pose_keypoints_2d'][15*3:19*3])
 
             # face, both hand key points
             image_feature.extend(feature['face_keypoints_2d'])
@@ -93,7 +93,7 @@ class TranslateSLN():
             image_feature.extend(feature['hand_right_keypoints_2d'])
 
             # delete channel value
-            del result[2::3]
+            del image_feature[2::3]
 
             result.append(image_feature)
 
@@ -107,7 +107,8 @@ class TranslateSLN():
 
         return result
 
-    def _run_openpose(self):
+    @staticmethod
+    def _run_openpose():
         os.chdir("./openpose_source")
         openpose_command = [".\\bin\OpenPoseDemo.exe", "--image_dir", ".\examples\image\\", "--write_json", ".\out\\",
                             "0", "--display", "0", "--render_pose", "0", "--face", "--hand"]

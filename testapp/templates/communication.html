@@ -53,7 +53,7 @@
 <section class="page-section START" style="float: left;width: 50%;height:100%" id="START">
     <div class="container" style="padding: 10px">
         <div class="row" style="margin-bottom: 20px">
-            <h2 style="font-family:'Times New Roman'; margin: auto">언어: </h2>
+            <h2 style="font-family:'Times New Roman';margin: auto">언어: </h2>
             <div class="col-sm-10 form-inline">
                 <select class="form-control" id="language"></select>
                 <button type="button" class="btn btn-primary" style="margin: 5px" id="artyom-start">Start</button>
@@ -61,7 +61,7 @@
             </div>
         </div>
 
-        <div class="row" style="font-size: 40px;font-family: Verdana;font-weight: bolder; width: 1150px">
+        <div class="row" style="font-size: 30px; font-family: Verdana; font-weight: bolder; width: 100%">
             <div class="col-md-10 col-md-offset-1" style="margin-left: 10px;">
                 <div id="contents" name="contents" class="well" style="padding: 10px; overFlow : auto; height:700px">
                     <div id="final"></div>
@@ -77,15 +77,14 @@
     <div class="container">
         {% csrf_token %}
         <video autoplay="true" class="videoElement"
-               style="height: 495px; width: 880px; border-style: solid; border-color: #2c3e50; margin-left: 10px; margin-top: 10px"></video>
-    </div>
-    <div id="sign_language_div"
-         style="padding: 10px; height:300px;width: 880px; border-style: solid; border-color: #2c3e50;margin-left: 35px; margin-top: 20px; font-size: 40px">
+               style="height: 495px; width: 100%; padding-top: 10px;"></video>
+        <div id="sign_language_div"
+             style="margin-left: 23px; margin-right: 23px; height: 300px; border-style: solid; font-size: 70px; text-align: center; line-height: 300px; vertical-align: middle;">
+        </div>
     </div>
 
     <canvas id="snapshot" width="1280px" , height="720px"
             style="visibility: hidden; width: 0px;height: 0px; padding: 0px;margin: 0px"></canvas>
-    <button id="capture" style="visibility: hidden; height: 0px; width: 0px; padding: 0px;margin: 0px">Capture</button>
 </aside>
 
 <!-- Scroll to Top Button (Only visible on small and extra-small screen sizes)-->
@@ -106,7 +105,6 @@
     var UserDictation = null;
     var finalHistory = {};
 
-    // 초기 한국어 setting
     $(document).ready(function () {
         if (artyom.recognizingSupported()) {
             artyom.ArtyomVoicesIdentifiers["ko-KR"] = ["Google 한국의", "ko-KR", "ko_KR"];
@@ -143,12 +141,12 @@
 
             UserDictation = artyom.newDictation({
                 continuous: true, // Enable continuous if HTTPS connection
-                onResult: function (text) {
+                onResult: function (text, temporal) {
                     if (text !== "")
                         $("#contents #interim").text(text);
                     else {
                         newTag = document.createElement("p");
-                        newTag.textContent = $("#contents #interim").text();
+                        newTag.textContent = "의사 : " + $("#contents #interim").text();
                         $("#contents #final").append(newTag);
 
                         $("#contents #interim").text("");
@@ -161,7 +159,6 @@
                 },
                 onEnd: function () {
                     console.log("Dictation stopped by the user");
-                    $("#contents #interim").text("");
                 }
             });
 
@@ -176,7 +173,8 @@
 
     $("#artyom-stop").click(() => {
         UserDictation.stop();
-    })
+    });
+
 </script>
 </body>
 </html>
