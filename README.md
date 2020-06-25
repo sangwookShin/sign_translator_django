@@ -31,7 +31,7 @@ manage.py runsslserver --certificate development.crt --key development.key
 |![사진](./testapp/static/assets/img/START/tensorflow.png)|![사진](./testapp/static/assets/img/START/colab_logo.png)|
 
 ## 모델
-![사진](./testapp/static/assets/img/START/model.png)   
+![사진](./testapp/static/assets/img/START/model.PNG)   
    
 GRU모델을 사용했고 설계는 GRU 층이 총 5개, hidden layer 256개 사용했다.
 
