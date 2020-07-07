@@ -38,7 +38,9 @@ def RoomSetting(request):
 
 def sln_translate(request):
     model = TranslateSLN()
-    return HttpResponse(json.dumps(model.translate_sln(), ensure_ascii=False)
-                        , status=202
-                        , content_type="application/json"
-                        , charset="utf-8")
+    return HttpResponse(
+        json.dumps(model.translate_sln(), ensure_ascii=False),
+        status=202,
+        content_type="application/json",
+        charset="utf-8"
+    )

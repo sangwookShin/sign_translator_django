@@ -33,6 +33,7 @@ function sendImage() {
 var video_start = document.getElementById("video_start")
 var video_close = document.getElementById("video_close")
 var time;
+let index = 0;
 
 video_start.addEventListener('click', function () {
     video_start.disabled = true
@@ -43,7 +44,7 @@ video_start.addEventListener('click', function () {
         if (time >= 50) {
             video_close.disabled = false
         }
-    }, 1);
+    }, 100);
 })
 
 video_close.addEventListener('click', function () {
@@ -55,13 +56,25 @@ video_close.addEventListener('click', function () {
         type: 'GET',
         url: '/translate/',
         data: {},
-        success:function(result){
-                        console.log(result);
-                        console.log(result[0]);
-                        console.log(result[1]);
-                        console.log(result.message);
+        success: function (result) {
+            console.log(result);
+            console.log(result.message);
 
-                        $("#sign_language_div").append(result)
-                    }
+            let prob = result.probability * 0.99;
+            prob = prob.toFixed(7)
+
+            $("#sign_language_div").text("");
+            $("#sign_language_div").text(result.message + " " + prob);
+
+            if(prob < 0.5){
+                $("#sign_language_div").css('color', 'red');
+            }else{
+                $("#sign_language_div").css('color', 'black');
+            }
+
+            newTag = document.createElement("p");
+            newTag.textContent = "환자 : " + result.message;
+            $("#contents #final").append(newTag);
+        }
     })
 })
